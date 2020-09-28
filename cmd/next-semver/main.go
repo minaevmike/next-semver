@@ -9,11 +9,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/blang/semver"
+	"github.com/blang/semver/v4"
 )
 
 func main() {
 	path := flag.String("path", "./", "path to git folder")
+	patchToMinor := flag.Uint64("patch_to_minor", 10, "patch version to update minor")
 
 	flag.Parse()
 	absPath, err := filepath.Abs(*path)
@@ -44,5 +45,9 @@ func main() {
 	}
 	lastVersion := versions[len(versions)-1]
 	lastVersion.Patch++
+	if lastVersion.Patch >= *patchToMinor {
+		lastVersion.Patch = 0
+		lastVersion.Minor++
+	}
 	fmt.Println(lastVersion.String())
 }
